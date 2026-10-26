@@ -229,6 +229,8 @@ Repo-wide conventions:
   Public skill script regressions live in `tests/skills/` and run in Skill Review CI
   independently of package review. Exercise dependency fallbacks with the optional
   import unavailable and mock HTTP transport to keep tests offline.
+  Gemini image references use Pillow-detected MIME metadata, preserving original bytes;
+  keep Pillow imports lazy so reference-free generation does not require it.
   Video, podcast, and chart-visualization CLI failures exit non-zero;
   diagnostics on stderr, success URLs on stdout; test offline.
 - **Before pushing** — backend `make format`, frontend `pnpm check`.
