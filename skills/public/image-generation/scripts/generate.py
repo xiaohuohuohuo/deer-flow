@@ -1,7 +1,8 @@
 import base64
-from contextlib import ExitStack
 import json
 import os
+from contextlib import ExitStack
+from io import BytesIO
 
 import requests
 
@@ -26,6 +27,17 @@ def validate_image(image_path: str) -> bool:
     except Exception as exc:
         print(f"Warning: Image '{image_path}' is invalid or corrupted: {exc}")
         return False
+
+
+def _reference_image_mime(image_bytes: bytes) -> str:
+    """Identify validated reference bytes rather than trusting the filename."""
+    from PIL import Image
+
+    with Image.open(BytesIO(image_bytes)) as image:
+        mime_type = Image.MIME.get(image.format)
+    if mime_type is None:
+        raise ValueError("Cannot determine reference image MIME type")
+    return mime_type
 
 
 def _resolve_provider(
@@ -220,8 +232,10 @@ def _generate_image_gemini(
 
     for reference_image in valid_reference_images:
         with open(reference_image, "rb") as f:
-            image_b64 = base64.b64encode(f.read()).decode("utf-8")
-        parts.append({"inlineData": {"mimeType": "image/jpeg", "data": image_b64}})
+            image_bytes = f.read()
+        mime_type = _reference_image_mime(image_bytes)
+        image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+        parts.append({"inlineData": {"mimeType": mime_type, "data": image_b64}})
 
     bearer_value = os.getenv("GEMINI_API_KEY")
     if not bearer_value:
