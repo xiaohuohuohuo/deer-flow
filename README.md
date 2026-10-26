@@ -1780,7 +1780,9 @@ Skill projection manifest saves preserve the original error or interruption even
 ```
 
 The built-in `image-generation` skill supports Gemini, MiniMax, and
-OpenAI-compatible Images APIs. Select the latter with
+OpenAI-compatible Images APIs. Gemini reference images retain their original
+bytes and use MIME metadata detected from the image contents, including when
+filenames have a different extension. Select the OpenAI-compatible provider with
 `IMAGE_GENERATION_PROVIDER=openai`, then configure
 `IMAGE_GENERATION_API_KEY`, `IMAGE_GENERATION_BASE_URL`, and
 `IMAGE_GENERATION_MODEL`. For a containerized sandbox or an explicitly enabled
