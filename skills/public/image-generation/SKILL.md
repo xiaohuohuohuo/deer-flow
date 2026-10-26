@@ -180,6 +180,11 @@ This approach significantly improves generation quality by providing the model w
 
 ## Providers (Gemini / MiniMax / OpenAI-compatible)
 
+Gemini reference images are validated with Pillow and submitted with their original
+bytes. Their MIME metadata is detected from the image contents rather than the
+filename extension; renaming a PNG file does not make it a JPEG. Invalid or
+corrupted references continue to be skipped with a warning.
+
 This skill auto-selects the provider by environment variables (no CLI change):
 
 - `GEMINI_API_KEY` set → use Gemini (default, unchanged).
